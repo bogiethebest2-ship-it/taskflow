@@ -25,6 +25,18 @@ const priorityStyles = {
   high: "bg-rose-100 text-rose-700",
 } as const;
 
+function formatCreatedTime(createdAt?: string) {
+  if (!createdAt) return null;
+
+  const date = new Date(createdAt);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat("bg-BG", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
+
 export function TaskCard({
   task,
   onDelete,
@@ -45,6 +57,9 @@ export function TaskCard({
           </Link>
           <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Обяснение</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">{task.description || "Няма допълнително описание."}</p>
+          {formatCreatedTime(task.createdAt) && (
+            <p className="mt-3 text-xs text-slate-400">Създадена: {formatCreatedTime(task.createdAt)}</p>
+          )}
         </div>
 
         <div className="flex flex-col items-end gap-2">
