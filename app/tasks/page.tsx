@@ -36,9 +36,9 @@ export default function TasksPage() {
         } = await supabase.auth.getUser();
 
         if (user) {
-          const { data, error } = await supabase.from("tasks").select("id, title, description, status, priority, created_at").order("created_at", { ascending: false });
+          const { data, error } = await supabase.from("tasks").select("id, title, description, status, priority").order("created_at", { ascending: false });
           if (!error && data && active) {
-            setTasks(data.map((task) => ({ ...task, createdAt: task.created_at })) as Task[]);
+            setTasks(data as Task[]);
             hasLoadedTasks.current = true;
             return;
           }
@@ -114,7 +114,6 @@ export default function TasksPage() {
         description: form.description.trim(),
         status: form.status,
         priority: form.priority,
-        createdAt: new Date().toISOString(),
       };
       setTasks((current) =>
         current.map((task) =>
