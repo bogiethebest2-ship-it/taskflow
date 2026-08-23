@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+:root { --background: #f7f5ef; --foreground: #172033; }
+[data-theme="dark"] { --background: #151719; --foreground: #f4f1e8; }
+* { box-sizing: border-box; }
+body {
+	margin: 0;
+	background: var(--background);
+	color: var(--foreground);
+	font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+}
+button, input, textarea, select { font: inherit; }
+
+[data-theme="dark"] body,
+[data-theme="dark"] .bg-slate-50,
+[data-theme="dark"] .bg-\[\#f7f5ef\] { background-color: #151719; color: #f4f1e8; }
+[data-theme="dark"] header,
+[data-theme="dark"] footer,
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-white\/90,
+[data-theme="dark"] section,
+[data-theme="dark"] article,
+[data-theme="dark"] aside,
+[data-theme="dark"] form { background-color: #202427; }
+[data-theme="dark"] main { background-color: #151719; }
+[data-theme="dark"] .bg-slate-100 { background-color: #2b3034; }
+[data-theme="dark"] .bg-slate-50 { background-color: #1b1f21; }
+[data-theme="dark"] .text-slate-900 { color: #f4f1e8; }
+[data-theme="dark"] .text-slate-700,
+[data-theme="dark"] .text-slate-600 { color: #c8c5bc; }
+[data-theme="dark"] .text-slate-500,
+[data-theme="dark"] .text-slate-400 { color: #9b9a94; }
+[data-theme="dark"] .border-slate-200,
+[data-theme="dark"] .border-slate-300 { border-color: #3b4246; }
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select { background-color: #202427; color: #f4f1e8; }
+[data-theme="dark"] .placeholder\:text-slate-400::placeholder { color: #8f918d; }
