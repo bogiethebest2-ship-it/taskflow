@@ -20,13 +20,7 @@ export default function AuthPage() {
     setMessage("");
 
     if (!supabase) {
-      if (email !== "test@example.com" || password !== "123456") {
-        setError("За тест използвай test@example.com и парола 123456.");
-        return;
-      }
-
-      window.localStorage.setItem("taskflow-demo-user", email);
-      router.push("/");
+      setError("Входът не е конфигуриран. Добави Supabase настройките в .env.local.");
       return;
     }
 
