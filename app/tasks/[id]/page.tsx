@@ -1,50 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
-import { sampleTasks } from "@/lib/tasks-data";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { sampleTasks } from "@/lib/tasks-data";
+import type { Task } from "@/types/task";
 const statusLabels = {
   todo: "To do",
   "in-progress": "In progress",
   done: "Done",
-  const [task, setTask] = useState<Task | null | undefined>(undefined);
+} as const;
 
-  useEffect(() => {
-    const taskId = Array.isArray(params.id) ? params.id[0] : params.id;
-    const savedTasks = window.localStorage.getItem("taskflow-tasks");
-
-    if (savedTasks) {
-      try {
-        const savedTask = (JSON.parse(savedTasks) as Task[]).find((item) => item.id === taskId);
-        if (savedTask) {
-          setTask(savedTask);
-          return;
-        }
-      } catch {
-        window.localStorage.removeItem("taskflow-tasks");
-      }
-    }
-
-    setTask(sampleTasks.find((item) => item.id === taskId) ?? null);
-  }, [params.id]);
-
-  if (task === undefined) {
-    return <main className="mx-auto max-w-4xl px-6 py-12 text-slate-600">Зареждане...</main>;
-  }
-
-  if (task === null) {
-    return (
-      <main className="mx-auto max-w-4xl px-6 py-12">
-        <h1 className="text-3xl font-black text-slate-900">Задачата не е намерена</h1>
-        <Link href="/tasks" className="mt-4 inline-flex text-sm font-medium text-indigo-600 hover:text-indigo-800">
-          ← Назад към задачите
-        </Link>
-      </main>
-    );
-  }
-  high: "High",
+const priorityLabels = {
+  low: "Нисък",
+  medium: "Среден",
+  high: "Висок",
 } as const;
 
 const statusStyles = {
@@ -60,11 +30,38 @@ const priorityStyles = {
 } as const;
 
 export default function TaskDetailPage() {
-  const params = useParams();
-  const task = sampleTasks.find((item) => item.id === params.id);
+  const params = useParams<{ id: string }>();
+  const [task, setTask] = useState<Task | null | undefined>(undefined);
 
-  if (!task) {
-    notFound();
+  useEffect(() => {
+    const savedTasks = window.localStorage.getItem("taskflow-tasks");
+    if (savedTasks) {
+      try {
+        const savedTask = (JSON.parse(savedTasks) as Task[]).find((item) => item.id === params.id);
+        if (savedTask) {
+          setTask(savedTask);
+          return;
+        }
+      } catch {
+        window.localStorage.removeItem("taskflow-tasks");
+      }
+    }
+    setTask(sampleTasks.find((item) => item.id === params.id) ?? null);
+  }, [params.id]);
+
+  if (task === undefined) {
+    return <main className="mx-auto max-w-4xl px-6 py-12 text-slate-600">Зареждане...</main>;
+  }
+
+  if (task === null) {
+    return (
+      <main className="mx-auto max-w-4xl px-6 py-12">
+        <h1 className="text-3xl font-black text-slate-900">Задачата не е намерена</h1>
+        <Link href="/tasks" className="mt-4 inline-flex text-sm font-medium text-indigo-600 hover:text-indigo-800">
+          ← Назад към задачите
+        </Link>
+      </main>
+    );
   }
 
   return (

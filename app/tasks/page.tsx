@@ -24,6 +24,8 @@ export default function TasksPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(emptyForm);
   const [formError, setFormError] = useState("");
+  const [compactView, setCompactView] = useState(false);
+  const [defaultPriority, setDefaultPriority] = useState<TaskPriority>("medium");
   const hasLoadedTasks = useRef(false);
 
   useEffect(() => {
@@ -65,6 +67,22 @@ export default function TasksPage() {
   }, []);
 
   useEffect(() => {
+    const savedSettings = window.localStorage.getItem("taskflow-settings");
+    if (!savedSettings) return;
+
+    try {
+      const settings = JSON.parse(savedSettings) as { compactView?: boolean; defaultPriority?: TaskPriority };
+      setCompactView(Boolean(settings.compactView));
+      if (settings.defaultPriority) {
+        setDefaultPriority(settings.defaultPriority);
+        setForm((current) => ({ ...current, priority: settings.defaultPriority! }));
+      }
+    } catch {
+      window.localStorage.removeItem("taskflow-settings");
+    }
+  }, []);
+
+  useEffect(() => {
     if (hasLoadedTasks.current) {
       window.localStorage.setItem(tasksStorageKey, JSON.stringify(tasks));
     }
@@ -94,7 +112,7 @@ export default function TasksPage() {
   );
 
   function resetForm() {
-    setForm(emptyForm);
+    setForm({ ...emptyForm, priority: defaultPriority });
     setEditingId(null);
     setFormError("");
   }
@@ -139,13 +157,16 @@ export default function TasksPage() {
           data: { user },
         } = await supabase.auth.getUser();
         if (user) {
-          await supabase.from("tasks").insert({
+          const { data } = await supabase.from("tasks").insert({
             title: newTask.title,
             description: newTask.description,
             status: newTask.status,
             priority: newTask.priority,
             user_id: user.id,
-          });
+          }).select("id, title, description, status, priority").single();
+          if (data) {
+            setTasks((current) => current.map((task) => (task.id === newTask.id ? (data as Task) : task)));
+          }
         }
       }
     }
@@ -300,7 +321,7 @@ export default function TasksPage() {
           </div>
         </form>
 
-        <div className="mt-8 grid gap-4">
+          <div className={`mt-8 grid ${compactView ? "gap-2" : "gap-4"}`}>
           {filteredTasks.length > 0 ? (
             filteredTasks.map((task) => (
               <TaskCard
